@@ -60,26 +60,29 @@ export default function LocationSearch({ value, onChange }) {
 
   return (
     <div ref={wrapperRef} className="relative">
-      <input
-        type="text"
-        value={query}
-        onChange={handleInput}
-        onFocus={() => results.length > 0 && setIsOpen(true)}
-        placeholder="Search city or town..."
-        className="w-full px-4 py-3 bg-abyss border border-border rounded-lg text-text placeholder-text-muted focus:outline-none focus:border-gold transition-colors"
-      />
-      {loading && (
-        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-          <div className="w-4 h-4 border-2 border-gold border-t-transparent rounded-full animate-spin" />
-        </div>
-      )}
+      <div className="relative">
+        <input
+          type="text"
+          value={query}
+          onChange={handleInput}
+          onFocus={() => results.length > 0 && setIsOpen(true)}
+          placeholder="Search city or town..."
+          className="input-field pr-10"
+        />
+        {loading && (
+          <div className="absolute right-4 top-1/2 -translate-y-1/2">
+            <div className="w-4 h-4 border-2 border-gold border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+      </div>
+
       {isOpen && (
-        <ul className="absolute z-50 w-full mt-1 bg-card border border-border rounded-lg overflow-hidden shadow-xl max-h-60 overflow-y-auto">
+        <ul className="absolute z-50 w-full mt-2 bg-[#1e1245] border border-white/10 rounded-2xl overflow-hidden shadow-2xl max-h-64 overflow-y-auto">
           {results.map((r, i) => (
             <li
               key={i}
               onClick={() => handleSelect(r)}
-              className="px-4 py-3 cursor-pointer hover:bg-card-hover text-sm text-text-muted hover:text-text transition-colors border-b border-border last:border-b-0"
+              className="px-5 py-4 cursor-pointer hover:bg-white/5 text-sm text-white/70 hover:text-white transition-colors border-b border-white/5 last:border-b-0"
             >
               {r.display_name}
             </li>

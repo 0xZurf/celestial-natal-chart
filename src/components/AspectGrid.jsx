@@ -3,11 +3,11 @@ import { motion } from 'framer-motion'
 import { PLANETS as PLANET_DATA, ASPECTS } from '../data/zodiac'
 
 const ASPECT_COLORS = {
-  Conjunction: 'bg-conjunction/20 text-conjunction border-conjunction/30',
-  Sextile: 'bg-sextile/20 text-sextile border-sextile/30',
-  Square: 'bg-square/20 text-square border-square/30',
-  Trine: 'bg-trine/20 text-trine border-trine/30',
-  Opposition: 'bg-opposition/20 text-opposition border-opposition/30',
+  Conjunction: { bg: 'rgba(251,191,36,0.1)', border: 'rgba(251,191,36,0.25)', text: 'var(--color-conjunction)' },
+  Sextile: { bg: 'rgba(52,211,153,0.1)', border: 'rgba(52,211,153,0.25)', text: 'var(--color-sextile)' },
+  Square: { bg: 'rgba(251,113,133,0.1)', border: 'rgba(251,113,133,0.25)', text: 'var(--color-square)' },
+  Trine: { bg: 'rgba(96,165,250,0.1)', border: 'rgba(96,165,250,0.25)', text: 'var(--color-trine)' },
+  Opposition: { bg: 'rgba(251,146,60,0.1)', border: 'rgba(251,146,60,0.25)', text: 'var(--color-opposition)' },
 }
 
 const ASPECT_SYMBOLS = {
@@ -24,26 +24,16 @@ export default function AspectGrid({ aspects }) {
 
   const filtered = filter === 'all' ? aspects : aspects.filter((a) => a.type === filter)
 
-  // Group by type for the legend
   const counts = {}
-  aspects.forEach((a) => {
-    counts[a.type] = (counts[a.type] || 0) + 1
-  })
+  aspects.forEach((a) => { counts[a.type] = (counts[a.type] || 0) + 1 })
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-    >
+    <div>
       {/* Filter pills */}
-      <div className="flex flex-wrap gap-2 mb-4">
+      <div className="flex flex-wrap gap-2 mb-5">
         <button
           onClick={() => setFilter('all')}
-          className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
-            filter === 'all'
-              ? 'bg-gold/20 text-gold border-gold/30'
-              : 'text-text-muted border-border hover:border-purple-dim'
-          }`}
+          className={`pill ${filter === 'all' ? 'pill-active' : ''}`}
         >
           All ({aspects.length})
         </button>
@@ -51,11 +41,12 @@ export default function AspectGrid({ aspects }) {
           <button
             key={type.name}
             onClick={() => setFilter(type.name)}
-            className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
+            className="pill"
+            style={
               filter === type.name
-                ? ASPECT_COLORS[type.name]
-                : 'text-text-muted border-border hover:border-purple-dim'
-            }`}
+                ? { background: ASPECT_COLORS[type.name].bg, borderColor: ASPECT_COLORS[type.name].border, color: ASPECT_COLORS[type.name].text }
+                : {}
+            }
           >
             {ASPECT_SYMBOLS[type.name]} {type.name} ({counts[type.name] || 0})
           </button>
@@ -68,47 +59,45 @@ export default function AspectGrid({ aspects }) {
           const p1 = PLANET_DATA.find((p) => p.name === aspect.planet1)
           const p2 = PLANET_DATA.find((p) => p.name === aspect.planet2)
           const isSelected = selectedAspect === i
+          const colors = ASPECT_COLORS[aspect.type]
 
           return (
             <motion.div
               key={`${aspect.planet1}-${aspect.planet2}-${aspect.type}`}
               layout
-              className={`glass-card p-3 cursor-pointer transition-all ${
-                isSelected ? 'ring-1 ring-gold/30' : ''
-              }`}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.03 }}
+              className={`glass p-4 cursor-pointer ${isSelected ? 'ring-1 ring-white/20' : ''}`}
               onClick={() => setSelectedAspect(isSelected ? null : i)}
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">{p1?.symbol}</span>
-                  <span className="text-text-muted text-xs">{aspect.planet1}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">{p1?.symbol}</span>
+                  <span className="text-white/50 text-sm">{aspect.planet1}</span>
                   <span
-                    className={`text-sm px-2 py-0.5 rounded border ${ASPECT_COLORS[aspect.type]}`}
+                    className="text-sm px-2.5 py-1 rounded-lg font-medium"
+                    style={{ background: colors.bg, color: colors.text, border: `1px solid ${colors.border}` }}
                   >
                     {ASPECT_SYMBOLS[aspect.type]}
                   </span>
-                  <span className="text-text-muted text-xs">{aspect.planet2}</span>
-                  <span className="text-lg">{p2?.symbol}</span>
+                  <span className="text-white/50 text-sm">{aspect.planet2}</span>
+                  <span className="text-xl">{p2?.symbol}</span>
                 </div>
-                <div className="text-right">
-                  <span className="text-xs text-text-muted">
-                    Orb: {aspect.orb.toFixed(1)}\u00B0
-                  </span>
-                </div>
+                <span className="text-white/30 text-xs">
+                  {aspect.orb.toFixed(1)}\u00B0 orb
+                  {aspect.exact && <span className="text-gold ml-1">exact</span>}
+                </span>
               </div>
 
               {isSelected && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
-                  className="mt-3 pt-3 border-t border-border"
+                  className="mt-3 pt-3 border-t border-white/5"
                 >
-                  <p className="text-sm text-text/80">
+                  <p className="text-white/70 text-sm leading-relaxed">
                     {ASPECTS.find((a) => a.name === aspect.type)?.meaning}
-                  </p>
-                  <p className="text-xs text-text-muted mt-2">
-                    {aspect.planet1} and {aspect.planet2} are {aspect.orb.toFixed(1)}\u00B0 from an exact {aspect.type.toLowerCase()} ({aspect.type === 'Conjunction' ? '0' : ASPECTS.find((a) => a.name === aspect.type)?.angle}\u00B0).
-                    {aspect.orb < 2 ? ' This is a tight aspect with strong influence.' : ''}
                   </p>
                 </motion.div>
               )}
@@ -117,11 +106,9 @@ export default function AspectGrid({ aspects }) {
         })}
 
         {filtered.length === 0 && (
-          <p className="text-text-muted text-sm text-center py-6">
-            No {filter !== 'all' ? filter.toLowerCase() + ' ' : ''}aspects found.
-          </p>
+          <p className="text-white/30 text-sm text-center py-8">No aspects found.</p>
         )}
       </div>
-    </motion.div>
+    </div>
   )
 }

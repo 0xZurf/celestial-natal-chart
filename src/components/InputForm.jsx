@@ -5,7 +5,8 @@ import LocationSearch from './LocationSearch'
 const STEPS = ['info', 'birth', 'location']
 
 export default function InputForm({ onSubmit }) {
-  const [step, setStep] = useState(0)
+  const [step, setStep] = useState(-1) // -1 = landing
+  const [direction, setDirection] = useState(1)
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -16,28 +17,29 @@ export default function InputForm({ onSubmit }) {
   const [errors, setErrors] = useState({})
 
   function update(field, value) {
-    setForm(prev => ({ ...prev, [field]: value }))
-    setErrors(prev => ({ ...prev, [field]: null }))
+    setForm((prev) => ({ ...prev, [field]: value }))
+    setErrors((prev) => ({ ...prev, [field]: null }))
   }
 
   function validateStep() {
     const newErrors = {}
     if (step === 0) {
-      if (!form.name.trim()) newErrors.name = 'Name is required'
-      if (!form.email.trim()) newErrors.email = 'Email is required'
-      else if (!/\S+@\S+\.\S+/.test(form.email)) newErrors.email = 'Enter a valid email'
+      if (!form.name.trim()) newErrors.name = 'What should we call you?'
+      if (!form.email.trim()) newErrors.email = 'We need your email'
+      else if (!/\S+@\S+\.\S+/.test(form.email)) newErrors.email = 'That doesn\'t look right'
     } else if (step === 1) {
-      if (!form.birthDate) newErrors.birthDate = 'Birth date is required'
-      if (!form.birthTime) newErrors.birthTime = 'Birth time is required for accurate houses'
+      if (!form.birthDate) newErrors.birthDate = 'Pick your birth date'
+      if (!form.birthTime) newErrors.birthTime = 'Exact time gives the best reading'
     } else if (step === 2) {
-      if (!form.location) newErrors.location = 'Birth location is required'
+      if (!form.location) newErrors.location = 'Search for your birth city'
     }
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
   function handleNext() {
-    if (!validateStep()) return
+    if (step >= 0 && !validateStep()) return
+    setDirection(1)
     if (step < STEPS.length - 1) {
       setStep(step + 1)
     } else {
@@ -46,73 +48,142 @@ export default function InputForm({ onSubmit }) {
   }
 
   function handleBack() {
+    setDirection(-1)
     if (step > 0) setStep(step - 1)
+    else if (step === 0) setStep(-1)
   }
 
-  const slideVariants = {
-    enter: (direction) => ({ x: direction > 0 ? 80 : -80, opacity: 0 }),
-    center: { x: 0, opacity: 1 },
-    exit: (direction) => ({ x: direction < 0 ? 80 : -80, opacity: 0 }),
+  const pageVariants = {
+    enter: (dir) => ({
+      y: dir > 0 ? 60 : -60,
+      opacity: 0,
+    }),
+    center: {
+      y: 0,
+      opacity: 1,
+    },
+    exit: (dir) => ({
+      y: dir < 0 ? 60 : -60,
+      opacity: 0,
+    }),
+  }
+
+  // Landing screen
+  if (step === -1) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center px-6 min-h-screen">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center max-w-sm"
+        >
+          {/* Animated star icon */}
+          <motion.div
+            className="text-6xl mb-6"
+            animate={{ rotate: [0, 5, -5, 0], scale: [1, 1.05, 1] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            &#10022;
+          </motion.div>
+
+          <h1 className="font-heading text-5xl text-white glow-text mb-4 leading-tight">
+            Celestial
+          </h1>
+          <p className="text-white/50 text-lg mb-12 leading-relaxed">
+            Discover the stars that shaped you
+          </p>
+
+          <motion.button
+            onClick={handleNext}
+            className="btn-primary w-full text-lg py-5"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            Read My Chart
+          </motion.button>
+
+          <p className="text-white/25 text-xs mt-6">
+            Built by JohnnyLeeXYZ
+          </p>
+        </motion.div>
+      </div>
+    )
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.2 }}
-      className="w-full max-w-md mx-auto"
-    >
-      <div className="glass-card glow-gold p-8">
-        {/* Progress dots */}
-        <div className="flex justify-center gap-2 mb-8">
+    <div className="flex-1 flex flex-col min-h-screen">
+      {/* Top bar with back + progress */}
+      <div className="px-6 pt-6 pb-4 flex items-center justify-between">
+        <button
+          onClick={handleBack}
+          className="text-white/40 hover:text-white transition-colors text-sm flex items-center gap-1"
+        >
+          <span className="text-lg">&#8249;</span> Back
+        </button>
+        <div className="flex gap-2">
           {STEPS.map((_, i) => (
-            <div
+            <motion.div
               key={i}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                i === step ? 'bg-gold w-6' : i < step ? 'bg-gold-dim' : 'bg-border'
-              }`}
+              className="h-1 rounded-full overflow-hidden"
+              style={{ width: i === step ? 32 : 12 }}
+              animate={{
+                width: i === step ? 32 : 12,
+                backgroundColor:
+                  i < step
+                    ? 'var(--color-gold)'
+                    : i === step
+                    ? 'var(--color-gold)'
+                    : 'rgba(255,255,255,0.15)',
+              }}
+              transition={{ duration: 0.3 }}
             />
           ))}
         </div>
+        <div className="w-12" /> {/* Spacer */}
+      </div>
 
-        <AnimatePresence mode="wait" custom={step}>
+      {/* Form content */}
+      <div className="flex-1 flex flex-col justify-center px-6 pb-8 max-w-md mx-auto w-full">
+        <AnimatePresence mode="wait" custom={direction}>
           {step === 0 && (
             <motion.div
               key="info"
-              custom={1}
-              variants={slideVariants}
+              custom={direction}
+              variants={pageVariants}
               initial="enter"
               animate="center"
               exit="exit"
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.35, ease: 'easeOut' }}
             >
-              <h2 className="font-heading text-xl text-gold mb-1 text-center">Who Are You?</h2>
-              <p className="text-text-muted text-sm mb-6 text-center">Tell us about yourself</p>
+              <h2 className="font-heading text-3xl text-white mb-2">Who are you?</h2>
+              <p className="text-white/40 mb-8">The stars already know. Remind them.</p>
 
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <div>
-                  <label className="block text-sm text-text-muted mb-1">Name</label>
+                  <label className="block text-white/60 text-sm mb-2 font-medium">Your Name</label>
                   <input
                     type="text"
                     value={form.name}
                     onChange={(e) => update('name', e.target.value)}
-                    placeholder="Your name"
-                    className="w-full px-4 py-3 bg-abyss border border-border rounded-lg text-text placeholder-text-muted focus:outline-none focus:border-gold transition-colors"
+                    placeholder="First name is fine"
+                    className="input-field"
+                    autoFocus
                     onKeyDown={(e) => e.key === 'Enter' && handleNext()}
                   />
-                  {errors.name && <p className="text-fire text-xs mt-1">{errors.name}</p>}
+                  {errors.name && <p className="text-rose text-xs mt-2">{errors.name}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm text-text-muted mb-1">Email</label>
+                  <label className="block text-white/60 text-sm mb-2 font-medium">Email</label>
                   <input
                     type="email"
                     value={form.email}
                     onChange={(e) => update('email', e.target.value)}
-                    placeholder="your@email.com"
-                    className="w-full px-4 py-3 bg-abyss border border-border rounded-lg text-text placeholder-text-muted focus:outline-none focus:border-gold transition-colors"
+                    placeholder="you@example.com"
+                    className="input-field"
                     onKeyDown={(e) => e.key === 'Enter' && handleNext()}
                   />
-                  {errors.email && <p className="text-fire text-xs mt-1">{errors.email}</p>}
+                  {errors.email && <p className="text-rose text-xs mt-2">{errors.email}</p>}
                 </div>
               </div>
             </motion.div>
@@ -121,36 +192,36 @@ export default function InputForm({ onSubmit }) {
           {step === 1 && (
             <motion.div
               key="birth"
-              custom={1}
-              variants={slideVariants}
+              custom={direction}
+              variants={pageVariants}
               initial="enter"
               animate="center"
               exit="exit"
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.35, ease: 'easeOut' }}
             >
-              <h2 className="font-heading text-xl text-gold mb-1 text-center">When Were You Born?</h2>
-              <p className="text-text-muted text-sm mb-6 text-center">Exact time gives the most accurate chart</p>
+              <h2 className="font-heading text-3xl text-white mb-2">When were you born?</h2>
+              <p className="text-white/40 mb-8">Exact time unlocks your full chart.</p>
 
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <div>
-                  <label className="block text-sm text-text-muted mb-1">Birth Date</label>
+                  <label className="block text-white/60 text-sm mb-2 font-medium">Birth Date</label>
                   <input
                     type="date"
                     value={form.birthDate}
                     onChange={(e) => update('birthDate', e.target.value)}
-                    className="w-full px-4 py-3 bg-abyss border border-border rounded-lg text-text focus:outline-none focus:border-gold transition-colors"
+                    className="input-field"
                   />
-                  {errors.birthDate && <p className="text-fire text-xs mt-1">{errors.birthDate}</p>}
+                  {errors.birthDate && <p className="text-rose text-xs mt-2">{errors.birthDate}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm text-text-muted mb-1">Birth Time</label>
+                  <label className="block text-white/60 text-sm mb-2 font-medium">Birth Time</label>
                   <input
                     type="time"
                     value={form.birthTime}
                     onChange={(e) => update('birthTime', e.target.value)}
-                    className="w-full px-4 py-3 bg-abyss border border-border rounded-lg text-text focus:outline-none focus:border-gold transition-colors"
+                    className="input-field"
                   />
-                  {errors.birthTime && <p className="text-fire text-xs mt-1">{errors.birthTime}</p>}
+                  {errors.birthTime && <p className="text-rose text-xs mt-2">{errors.birthTime}</p>}
                 </div>
               </div>
             </motion.div>
@@ -159,53 +230,54 @@ export default function InputForm({ onSubmit }) {
           {step === 2 && (
             <motion.div
               key="location"
-              custom={1}
-              variants={slideVariants}
+              custom={direction}
+              variants={pageVariants}
               initial="enter"
               animate="center"
               exit="exit"
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.35, ease: 'easeOut' }}
             >
-              <h2 className="font-heading text-xl text-gold mb-1 text-center">Where Were You Born?</h2>
-              <p className="text-text-muted text-sm mb-6 text-center">City and country for house calculations</p>
+              <h2 className="font-heading text-3xl text-white mb-2">Where were you born?</h2>
+              <p className="text-white/40 mb-8">Your birth city positions the houses.</p>
 
               <div>
-                <label className="block text-sm text-text-muted mb-1">Birth Location</label>
-                <LocationSearch
-                  value={form.location}
-                  onChange={(loc) => update('location', loc)}
-                />
-                {errors.location && <p className="text-fire text-xs mt-1">{errors.location}</p>}
+                <label className="block text-white/60 text-sm mb-2 font-medium">Birth Location</label>
+                <LocationSearch value={form.location} onChange={(loc) => update('location', loc)} />
+                {errors.location && <p className="text-rose text-xs mt-2">{errors.location}</p>}
                 {form.location && (
-                  <p className="text-xs text-text-muted mt-2">
-                    Coordinates: {form.location.latitude.toFixed(4)}, {form.location.longitude.toFixed(4)}
-                  </p>
+                  <div className="mt-3 flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-mint" />
+                    <p className="text-white/40 text-xs">
+                      {form.location.latitude.toFixed(2)}N, {Math.abs(form.location.longitude).toFixed(2)}{form.location.longitude >= 0 ? 'E' : 'W'}
+                    </p>
+                  </div>
                 )}
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Navigation */}
-        <div className="flex justify-between mt-8">
-          <button
-            onClick={handleBack}
-            className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${
-              step === 0
-                ? 'opacity-0 pointer-events-none'
-                : 'text-text-muted hover:text-text border border-border hover:border-purple-dim'
-            }`}
-          >
-            Back
-          </button>
-          <button
+        {/* Continue button */}
+        <motion.div
+          className="mt-10"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <motion.button
             onClick={handleNext}
-            className="px-6 py-2 bg-gold/20 border border-gold text-gold rounded-lg text-sm font-medium hover:bg-gold/30 transition-all hover:shadow-[0_0_20px_rgba(212,168,83,0.2)]"
+            className="btn-primary w-full"
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.98 }}
           >
-            {step === STEPS.length - 1 ? 'Generate Chart' : 'Continue'}
-          </button>
-        </div>
+            {step === STEPS.length - 1 ? (
+              <>&#10022; Generate My Chart</>
+            ) : (
+              'Continue'
+            )}
+          </motion.button>
+        </motion.div>
       </div>
-    </motion.div>
+    </div>
   )
 }
