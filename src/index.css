@@ -1,0 +1,181 @@
+@import "tailwindcss";
+
+@theme {
+  --color-void: #06060f;
+  --color-abyss: #0a0a1a;
+  --color-deep: #0f0e2a;
+  --color-card: #151430;
+  --color-card-hover: #1c1a40;
+  --color-border: #2a2755;
+  --color-gold: #d4a853;
+  --color-gold-light: #f0c674;
+  --color-gold-dim: #a08040;
+  --color-purple: #9b8ec4;
+  --color-purple-dim: #6b5f94;
+  --color-text: #e8e4df;
+  --color-text-muted: #8b87a0;
+  --color-fire: #e05555;
+  --color-earth: #6db56d;
+  --color-air: #5dadec;
+  --color-water: #7b8ec9;
+  --color-conjunction: #d4a853;
+  --color-trine: #4a9eff;
+  --color-sextile: #4aff9b;
+  --color-square: #ff4a6a;
+  --color-opposition: #ff8c4a;
+  --font-heading: 'Cinzel', serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-void);
+  color: var(--color-text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Star field background */
+.star-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.star-field::before,
+.star-field::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 40px 70px, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 50px 160px, rgba(255, 255, 255, 0.2), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.2), transparent),
+    radial-gradient(1.5px 1.5px at 160px 120px, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1px 1px at 200px 50px, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 250px 180px, rgba(255, 255, 255, 0.2), transparent),
+    radial-gradient(1.5px 1.5px at 300px 90px, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 350px 140px, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 400px 200px, rgba(255, 255, 255, 0.2), transparent),
+    radial-gradient(1px 1px at 450px 60px, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1.5px 1.5px at 500px 170px, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1px 1px at 550px 110px, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 600px 30px, rgba(255, 255, 255, 0.2), transparent);
+  background-size: 620px 220px;
+  animation: twinkle 8s ease-in-out infinite alternate;
+}
+
+.star-field::after {
+  background-size: 400px 300px;
+  animation-delay: -4s;
+  animation-duration: 12s;
+  opacity: 0.6;
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.5; }
+}
+
+/* Glow effects */
+.glow-gold {
+  box-shadow: 0 0 20px rgba(212, 168, 83, 0.15), 0 0 60px rgba(212, 168, 83, 0.05);
+}
+
+.glow-text {
+  text-shadow: 0 0 20px rgba(212, 168, 83, 0.3);
+}
+
+/* Glass card */
+.glass-card {
+  background: linear-gradient(135deg, rgba(21, 20, 48, 0.8), rgba(15, 14, 42, 0.6));
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+}
+
+.glass-card:hover {
+  border-color: rgba(212, 168, 83, 0.3);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-abyss);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-purple-dim);
+}
+
+/* Loading animation */
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(40px) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(40px) rotate(-360deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+.orbit-dot {
+  animation: orbit 3s linear infinite;
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Chart wheel hover effects */
+.chart-planet {
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.chart-planet:hover {
+  transform: scale(1.3);
+  filter: drop-shadow(0 0 6px rgba(212, 168, 83, 0.6));
+}
+
+/* Aspect line hover */
+.aspect-line {
+  transition: opacity 0.2s ease, stroke-width 0.2s ease;
+}
+
+.aspect-line:hover {
+  opacity: 1 !important;
+  stroke-width: 2 !important;
+}
+
+/* Smooth transitions for expandable cards */
+.expand-enter {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.expand-enter-active {
+  max-height: 200px;
+  opacity: 1;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+}
