@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import LocationSearch from './LocationSearch'
 
 export default function InputForm({ onSubmit }) {
@@ -44,169 +43,203 @@ export default function InputForm({ onSubmit }) {
     if (step > -1) setStep(step - 1)
   }
 
-  // Landing
+  // ── Landing page ──
   if (step === -1) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center max-w-xs w-full"
-        >
-          <motion.p
-            className="text-5xl mb-8"
-            animate={{ rotate: [0, 5, -5, 0] }}
-            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-          >
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+      }}>
+        <div className="fade-in" style={{ textAlign: 'center', maxWidth: '320px', width: '100%' }}>
+          <p className="float-spin" style={{ fontSize: '56px', marginBottom: '32px', display: 'inline-block' }}>
             &#10022;
-          </motion.p>
+          </p>
 
-          <h1 className="text-4xl font-bold text-white glow-text mb-3">
+          <h1 style={{
+            fontSize: '40px',
+            fontWeight: 700,
+            color: 'white',
+            marginBottom: '12px',
+            letterSpacing: '-0.02em',
+          }}>
             Celestial
           </h1>
-          <p className="text-white/60 text-base mb-12">
+
+          <p style={{
+            color: 'rgba(255,255,255,0.6)',
+            fontSize: '16px',
+            marginBottom: '48px',
+            lineHeight: 1.5,
+          }}>
             Discover the stars that shaped you
           </p>
 
-          <button onClick={next} className="btn-primary w-full text-lg py-5">
+          <button
+            onClick={next}
+            className="btn-primary"
+            style={{ width: '100%', fontSize: '17px', padding: '18px 32px' }}
+          >
             Read My Chart
           </button>
 
-          <p className="text-white/20 text-xs mt-8">Built by JohnnyLeeXYZ</p>
-        </motion.div>
+          <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: '12px', marginTop: '32px' }}>
+            Built by JohnnyLeeXYZ
+          </p>
+        </div>
       </div>
     )
   }
 
-  const stepContent = [
-    // Step 0: Name + Email
-    <div key="info">
-      <h2 className="text-2xl font-bold text-white mb-1">Who are you?</h2>
-      <p className="text-white/50 text-sm mb-8">The stars already know. Remind them.</p>
-      <div className="space-y-5">
-        <div>
-          <label className="block text-white/70 text-sm mb-2 font-medium">Your Name</label>
-          <input
-            type="text"
-            value={form.name}
-            onChange={(e) => update('name', e.target.value)}
-            placeholder="First name is fine"
-            className="input-field"
-            autoFocus
-            onKeyDown={(e) => e.key === 'Enter' && next()}
-          />
-          {errors.name && <p className="text-rose text-xs mt-2">{errors.name}</p>}
-        </div>
-        <div>
-          <label className="block text-white/70 text-sm mb-2 font-medium">Email</label>
-          <input
-            type="email"
-            value={form.email}
-            onChange={(e) => update('email', e.target.value)}
-            placeholder="you@example.com"
-            className="input-field"
-            onKeyDown={(e) => e.key === 'Enter' && next()}
-          />
-          {errors.email && <p className="text-rose text-xs mt-2">{errors.email}</p>}
-        </div>
-      </div>
-    </div>,
-
-    // Step 1: Birth date + time
-    <div key="birth">
-      <h2 className="text-2xl font-bold text-white mb-1">When were you born?</h2>
-      <p className="text-white/50 text-sm mb-8">Exact time unlocks your full chart.</p>
-      <div className="space-y-5">
-        <div>
-          <label className="block text-white/70 text-sm mb-2 font-medium">Birth Date</label>
-          <input
-            type="date"
-            value={form.birthDate}
-            onChange={(e) => update('birthDate', e.target.value)}
-            className="input-field"
-          />
-          {errors.birthDate && <p className="text-rose text-xs mt-2">{errors.birthDate}</p>}
-        </div>
-        <div>
-          <label className="block text-white/70 text-sm mb-2 font-medium">Birth Time</label>
-          <input
-            type="time"
-            value={form.birthTime}
-            onChange={(e) => update('birthTime', e.target.value)}
-            className="input-field"
-          />
-          {errors.birthTime && <p className="text-rose text-xs mt-2">{errors.birthTime}</p>}
-        </div>
-      </div>
-    </div>,
-
-    // Step 2: Location
-    <div key="location">
-      <h2 className="text-2xl font-bold text-white mb-1">Where were you born?</h2>
-      <p className="text-white/50 text-sm mb-8">Your birth city positions the houses.</p>
-      <div>
-        <label className="block text-white/70 text-sm mb-2 font-medium">Birth Location</label>
-        <LocationSearch value={form.location} onChange={(loc) => update('location', loc)} />
-        {errors.location && <p className="text-rose text-xs mt-2">{errors.location}</p>}
-        {form.location && (
-          <div className="flex items-center gap-2 mt-3">
-            <div className="w-1.5 h-1.5 rounded-full bg-mint" />
-            <p className="text-white/50 text-xs">
-              {form.location.latitude.toFixed(2)}, {form.location.longitude.toFixed(2)}
-            </p>
-          </div>
-        )}
-      </div>
-    </div>,
-  ]
-
+  // ── Form steps ──
   return (
-    <div className="min-h-screen flex flex-col">
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Top bar */}
-      <div className="px-6 pt-6 pb-4 flex items-center justify-between">
-        <button onClick={back} className="text-white/50 hover:text-white text-sm transition-colors">
+      <div style={{ padding: '24px 24px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <button
+          onClick={back}
+          style={{
+            background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)',
+            fontSize: '14px', cursor: 'pointer', padding: '4px 8px',
+          }}
+        >
           &#8249; Back
         </button>
-        <div className="flex gap-2">
+        <div style={{ display: 'flex', gap: '8px' }}>
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className="h-1 rounded-full transition-all duration-300"
               style={{
+                height: 4,
+                borderRadius: 2,
                 width: i === step ? 28 : 10,
                 backgroundColor: i <= step ? '#fbbf24' : 'rgba(255,255,255,0.12)',
+                transition: 'all 0.3s ease',
               }}
             />
           ))}
         </div>
-        <div className="w-12" />
+        <div style={{ width: 48 }} />
       </div>
 
-      {/* Content */}
-      <div className="flex-1 flex flex-col justify-center px-6 pb-10 max-w-md mx-auto w-full">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={step}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.25 }}
-          >
-            {stepContent[step]}
-          </motion.div>
-        </AnimatePresence>
+      {/* Content area */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: '0 24px 40px',
+        maxWidth: '420px',
+        margin: '0 auto',
+        width: '100%',
+      }}>
+        <div className="fade-in" key={step}>
+          {step === 0 && (
+            <div>
+              <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'white', marginBottom: '4px' }}>
+                Who are you?
+              </h2>
+              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '32px' }}>
+                The stars already know. Remind them.
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div>
+                  <label style={{ display: 'block', color: 'rgba(255,255,255,0.7)', fontSize: '14px', marginBottom: '8px', fontWeight: 500 }}>
+                    Your Name
+                  </label>
+                  <input
+                    type="text" value={form.name}
+                    onChange={(e) => update('name', e.target.value)}
+                    placeholder="First name is fine"
+                    className="input-field" autoFocus
+                    onKeyDown={(e) => e.key === 'Enter' && next()}
+                  />
+                  {errors.name && <p style={{ color: '#fb7185', fontSize: '12px', marginTop: '8px' }}>{errors.name}</p>}
+                </div>
+                <div>
+                  <label style={{ display: 'block', color: 'rgba(255,255,255,0.7)', fontSize: '14px', marginBottom: '8px', fontWeight: 500 }}>
+                    Email
+                  </label>
+                  <input
+                    type="email" value={form.email}
+                    onChange={(e) => update('email', e.target.value)}
+                    placeholder="you@example.com"
+                    className="input-field"
+                    onKeyDown={(e) => e.key === 'Enter' && next()}
+                  />
+                  {errors.email && <p style={{ color: '#fb7185', fontSize: '12px', marginTop: '8px' }}>{errors.email}</p>}
+                </div>
+              </div>
+            </div>
+          )}
 
-        <motion.div
-          className="mt-10"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.15 }}
-        >
-          <button onClick={next} className="btn-primary w-full">
-            {step === 2 ? '&#10022; Generate My Chart' : 'Continue'}
+          {step === 1 && (
+            <div>
+              <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'white', marginBottom: '4px' }}>
+                When were you born?
+              </h2>
+              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '32px' }}>
+                Exact time unlocks your full chart.
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div>
+                  <label style={{ display: 'block', color: 'rgba(255,255,255,0.7)', fontSize: '14px', marginBottom: '8px', fontWeight: 500 }}>
+                    Birth Date
+                  </label>
+                  <input
+                    type="date" value={form.birthDate}
+                    onChange={(e) => update('birthDate', e.target.value)}
+                    className="input-field"
+                  />
+                  {errors.birthDate && <p style={{ color: '#fb7185', fontSize: '12px', marginTop: '8px' }}>{errors.birthDate}</p>}
+                </div>
+                <div>
+                  <label style={{ display: 'block', color: 'rgba(255,255,255,0.7)', fontSize: '14px', marginBottom: '8px', fontWeight: 500 }}>
+                    Birth Time
+                  </label>
+                  <input
+                    type="time" value={form.birthTime}
+                    onChange={(e) => update('birthTime', e.target.value)}
+                    className="input-field"
+                  />
+                  {errors.birthTime && <p style={{ color: '#fb7185', fontSize: '12px', marginTop: '8px' }}>{errors.birthTime}</p>}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div>
+              <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'white', marginBottom: '4px' }}>
+                Where were you born?
+              </h2>
+              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '32px' }}>
+                Your birth city positions the houses.
+              </p>
+              <div>
+                <label style={{ display: 'block', color: 'rgba(255,255,255,0.7)', fontSize: '14px', marginBottom: '8px', fontWeight: 500 }}>
+                  Birth Location
+                </label>
+                <LocationSearch value={form.location} onChange={(loc) => update('location', loc)} />
+                {errors.location && <p style={{ color: '#fb7185', fontSize: '12px', marginTop: '8px' }}>{errors.location}</p>}
+                {form.location && (
+                  <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '12px', marginTop: '12px' }}>
+                    &#9679; {form.location.latitude.toFixed(2)}, {form.location.longitude.toFixed(2)}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Continue button */}
+        <div style={{ marginTop: '40px' }}>
+          <button onClick={next} className="btn-primary" style={{ width: '100%' }}>
+            {step === 2 ? '\u2726 Generate My Chart' : 'Continue'}
           </button>
-        </motion.div>
+        </div>
       </div>
     </div>
   )

@@ -195,6 +195,11 @@ body {
   to { transform: rotate(360deg) translateX(50px) rotate(-360deg); }
 }
 
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
 /* ── Chart ── */
 .chart-planet {
   cursor: pointer;
@@ -212,6 +217,26 @@ body {
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+
+/* ── CSS Animations (no JS dependency) ── */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float-spin {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(5deg) scale(1.02); }
+  75% { transform: rotate(-5deg) scale(0.98); }
+}
+
+.fade-in {
+  animation: fade-in 0.5s ease forwards;
+}
+
+.float-spin {
+  animation: float-spin 5s ease-in-out infinite;
+}
 
 /* ── Utilities ── */
 .glow-text {

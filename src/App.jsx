@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import InputForm from './components/InputForm'
 import LoadingScreen from './components/LoadingScreen'
 import ChartResults from './components/ChartResults'
@@ -74,15 +73,15 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen relative">
+    <div style={{ minHeight: '100vh', position: 'relative' }}>
       <div className="bg-cosmos" />
       <Sparkles />
 
-      <div className="relative z-10 min-h-screen">
+      <div style={{ position: 'relative', zIndex: 10, minHeight: '100vh' }}>
         {view === 'form' && <InputForm onSubmit={handleSubmit} />}
 
         {view === 'loading' && (
-          <div className="min-h-screen flex items-center justify-center px-6">
+          <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
             <LoadingScreen name={formData?.name} />
           </div>
         )}
@@ -92,12 +91,12 @@ export default function App() {
         )}
 
         {view === 'error' && (
-          <div className="min-h-screen flex items-center justify-center px-6">
-            <div className="card p-10 text-center max-w-sm w-full">
-              <p className="text-4xl mb-5">&#10038;</p>
-              <h2 className="text-xl font-bold text-white mb-3">Something Went Wrong</h2>
-              <p className="text-white/70 text-sm mb-8">{error}</p>
-              <button onClick={handleReset} className="btn-primary w-full">Try Again</button>
+          <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+            <div className="card" style={{ padding: '40px', textAlign: 'center', maxWidth: '360px', width: '100%' }}>
+              <p style={{ fontSize: '40px', marginBottom: '20px' }}>&#10038;</p>
+              <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'white', marginBottom: '12px' }}>Something Went Wrong</h2>
+              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px', marginBottom: '32px' }}>{error}</p>
+              <button onClick={handleReset} className="btn-primary" style={{ width: '100%' }}>Try Again</button>
             </div>
           </div>
         )}
