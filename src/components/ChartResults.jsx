@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { SIGNS, PLANETS as PLANET_DATA, HOUSES, formatDegree, getSignFromLongitude } from '../data/zodiac'
 import { risingSign } from '../data/interpretations'
+import { generatePDF } from '../utils/generatePDF'
 import ChartWheel from './ChartWheel'
 import PlanetCard from './PlanetCard'
 import HouseCard from './HouseCard'
@@ -8,6 +9,17 @@ import AspectGrid from './AspectGrid'
 
 export default function ChartResults({ chartData, onReset }) {
   const [selectedPlanet, setSelectedPlanet] = useState(null)
+  const [downloading, setDownloading] = useState(false)
+
+  function handleDownload() {
+    setDownloading(true)
+    try {
+      generatePDF(chartData)
+    } catch (err) {
+      console.error('PDF generation failed:', err)
+    }
+    setDownloading(false)
+  }
 
   const sun = chartData.planets.find((p) => p.name === 'Sun')
   const moon = chartData.planets.find((p) => p.name === 'Moon')
@@ -29,12 +41,23 @@ export default function ChartResults({ chartData, onReset }) {
         <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14 }}>
           {chartData.birthData.date} at {chartData.birthData.time}
         </p>
-        <button
-          onClick={onReset}
-          style={{ background: 'none', border: 'none', color: '#c4b5fd', fontSize: 12, cursor: 'pointer', marginTop: 8 }}
-        >
-          New chart
-        </button>
+        <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 12 }}>
+          <button
+            onClick={handleDownload}
+            className="btn-primary"
+            style={{ fontSize: 13, padding: '10px 20px' }}
+            disabled={downloading}
+          >
+            {downloading ? 'Generating...' : 'Download PDF'}
+          </button>
+          <button
+            onClick={onReset}
+            className="btn-ghost"
+            style={{ fontSize: 13, padding: '10px 20px' }}
+          >
+            New chart
+          </button>
+        </div>
       </div>
 
       {/* ── Big Three ── */}
