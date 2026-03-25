@@ -1,105 +1,66 @@
 @import "tailwindcss";
 
 @theme {
-  /* Backgrounds - rich purple gradient space */
-  --color-bg-start: #0c0420;
-  --color-bg-mid: #140a30;
-  --color-bg-end: #0a0218;
-
-  /* Cards - frosted glass with visible surfaces */
-  --color-card: rgba(255, 255, 255, 0.06);
-  --color-card-hover: rgba(255, 255, 255, 0.1);
-  --color-card-solid: #1e1245;
-  --color-border: rgba(255, 255, 255, 0.1);
-  --color-border-bright: rgba(255, 255, 255, 0.2);
-
-  /* Accent palette - warm gold + soft lavender */
+  --color-surface: #1a1040;
+  --color-surface-light: #241555;
+  --color-surface-lighter: #2e1a68;
+  --color-border: rgba(255, 255, 255, 0.08);
   --color-gold: #fbbf24;
   --color-gold-soft: #f59e0b;
-  --color-gold-glow: rgba(251, 191, 36, 0.25);
   --color-lavender: #c4b5fd;
-  --color-lavender-soft: #a78bfa;
   --color-rose: #fb7185;
-  --color-mint: #6ee7b7;
-
-  /* Text - HIGH contrast */
-  --color-text: #ffffff;
-  --color-text-secondary: rgba(255, 255, 255, 0.8);
-  --color-text-muted: rgba(255, 255, 255, 0.5);
-
-  /* Elements */
+  --color-mint: #34d399;
   --color-fire: #fb923c;
   --color-earth: #86efac;
   --color-air: #93c5fd;
   --color-water: #c4b5fd;
-
-  /* Aspects */
   --color-conjunction: #fbbf24;
   --color-trine: #60a5fa;
   --color-sextile: #34d399;
   --color-square: #fb7185;
   --color-opposition: #fb923c;
-
-  /* Fonts */
-  --font-heading: 'Cinzel', serif;
   --font-body: 'Inter', system-ui, sans-serif;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-body);
-  color: var(--color-text);
+  color: #ffffff;
   min-height: 100vh;
   overflow-x: hidden;
-  background: var(--color-bg-start);
+  background: #0c0420;
 }
 
-/* =========================================
-   ANIMATED GRADIENT MESH BACKGROUND
-   ========================================= */
+/* ── Background ── */
 .bg-cosmos {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: linear-gradient(135deg, #0c0420 0%, #1a0a3e 25%, #0f0530 50%, #180840 75%, #0a0218 100%);
+  background: linear-gradient(160deg, #0c0420 0%, #1a0a3e 30%, #0f0530 55%, #180840 80%, #0a0218 100%);
 }
 
-/* Floating gradient orbs */
 .bg-cosmos::before {
   content: '';
   position: absolute;
-  width: 60vw;
-  height: 60vw;
-  max-width: 600px;
-  max-height: 600px;
-  top: -10%;
-  right: -15%;
+  width: 60vw; height: 60vw;
+  max-width: 600px; max-height: 600px;
+  top: -10%; right: -15%;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 70%);
   animation: float-orb 20s ease-in-out infinite;
 }
 
 .bg-cosmos::after {
   content: '';
   position: absolute;
-  width: 50vw;
-  height: 50vw;
-  max-width: 500px;
-  max-height: 500px;
-  bottom: -10%;
-  left: -10%;
+  width: 50vw; height: 50vw;
+  max-width: 500px; max-height: 500px;
+  bottom: -10%; left: -10%;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(251, 191, 36, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.06) 0%, transparent 70%);
   animation: float-orb 25s ease-in-out infinite reverse;
 }
 
@@ -109,7 +70,7 @@ body {
   66% { transform: translate(-20px, 20px) scale(0.95); }
 }
 
-/* Sparkle particles layer */
+/* ── Sparkles ── */
 .sparkles {
   position: fixed;
   inset: 0;
@@ -120,8 +81,7 @@ body {
 
 .sparkle {
   position: absolute;
-  width: 3px;
-  height: 3px;
+  width: 2px; height: 2px;
   border-radius: 50%;
   background: white;
   animation: sparkle-float linear infinite;
@@ -129,247 +89,131 @@ body {
 
 @keyframes sparkle-float {
   0% { opacity: 0; transform: translateY(0) scale(0); }
-  10% { opacity: 1; transform: translateY(-20px) scale(1); }
-  90% { opacity: 0.6; transform: translateY(-200px) scale(0.5); }
+  10% { opacity: 0.8; transform: translateY(-20px) scale(1); }
+  90% { opacity: 0.3; transform: translateY(-200px) scale(0.5); }
   100% { opacity: 0; transform: translateY(-250px) scale(0); }
 }
 
-/* =========================================
-   GLASS CARDS
-   ========================================= */
-.glass {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  transition: all 0.3s ease;
+/* ── Cards: solid surfaces, no glass ── */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  transition: background 0.2s ease;
 }
 
-.glass:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
+.card:hover {
+  background: var(--color-surface-light);
 }
 
-.glass-strong {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 24px;
+.card-sm {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
 }
 
-/* Gradient border card - the premium look */
-.card-glow {
-  position: relative;
-  border-radius: 24px;
-  overflow: hidden;
-}
-
-.card-glow::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 24px;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(168, 85, 247, 0.2), rgba(251, 191, 36, 0.1));
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  -webkit-mask-composite: xor;
-  pointer-events: none;
-}
-
-/* =========================================
-   INPUTS - App-like
-   ========================================= */
+/* ── Inputs ── */
 .input-field {
   width: 100%;
   padding: 16px 20px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--color-surface);
   border: 1.5px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
+  border-radius: 14px;
   color: white;
   font-size: 16px;
   font-family: var(--font-body);
   outline: none;
-  transition: all 0.3s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.input-field::placeholder {
-  color: rgba(255, 255, 255, 0.35);
-}
-
+.input-field::placeholder { color: rgba(255, 255, 255, 0.3); }
 .input-field:focus {
   border-color: var(--color-gold);
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.1);
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.12);
 }
 
-/* =========================================
-   BUTTONS
-   ========================================= */
+/* ── Buttons ── */
 .btn-primary {
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center; justify-content: center;
   gap: 8px;
   padding: 16px 32px;
-  background: linear-gradient(135deg, var(--color-gold), var(--color-gold-soft));
+  background: var(--color-gold);
   color: #0c0420;
-  font-weight: 600;
-  font-size: 16px;
-  border-radius: 16px;
-  border: none;
+  font-weight: 600; font-size: 16px;
+  border-radius: 14px; border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(251, 191, 36, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 20px rgba(251, 191, 36, 0.2);
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(251, 191, 36, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 25px rgba(251, 191, 36, 0.3);
 }
 
-.btn-primary:active {
-  transform: translateY(0);
-}
+.btn-primary:active { transform: translateY(0); }
 
 .btn-ghost {
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px 24px;
+  align-items: center; justify-content: center;
+  gap: 6px;
+  padding: 12px 20px;
   background: transparent;
-  color: rgba(255, 255, 255, 0.6);
-  font-weight: 500;
-  font-size: 14px;
-  border-radius: 16px;
-  border: 1.5px solid rgba(255, 255, 255, 0.1);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-/* =========================================
-   PILLS / TAGS
-   ========================================= */
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 14px;
-  border-radius: 100px;
-  font-size: 12px;
-  font-weight: 500;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
   color: rgba(255, 255, 255, 0.7);
+  font-weight: 500; font-size: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
+.btn-ghost:hover { background: rgba(255, 255, 255, 0.05); color: white; }
+
+/* ── Pills ── */
+.pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 5px 12px;
+  border-radius: 100px;
+  font-size: 12px; font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
 .pill-active {
-  background: rgba(251, 191, 36, 0.15);
-  border-color: rgba(251, 191, 36, 0.3);
+  background: rgba(251, 191, 36, 0.12);
+  border-color: rgba(251, 191, 36, 0.25);
   color: var(--color-gold);
 }
 
-/* =========================================
-   SWIPE CARD STACK
-   ========================================= */
-.swipe-card {
-  position: absolute;
-  width: 100%;
-  cursor: grab;
-  touch-action: none;
-}
-
-.swipe-card:active {
-  cursor: grabbing;
-}
-
-/* =========================================
-   ANIMATIONS
-   ========================================= */
+/* ── Animations ── */
 @keyframes orbit {
   from { transform: rotate(0deg) translateX(50px) rotate(0deg); }
   to { transform: rotate(360deg) translateX(50px) rotate(-360deg); }
 }
 
-@keyframes pulse-soft {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.15); }
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-
-.animate-shimmer {
-  background: linear-gradient(90deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
-  background-size: 200% 100%;
-  animation: shimmer 3s ease-in-out infinite;
-}
-
-/* =========================================
-   CHART WHEEL
-   ========================================= */
+/* ── Chart ── */
 .chart-planet {
   cursor: pointer;
   transition: transform 0.2s ease, filter 0.2s ease;
 }
-
 .chart-planet:hover {
   transform: scale(1.3);
-  filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6));
+  filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.5));
 }
-
 .aspect-line {
   transition: opacity 0.2s ease, stroke-width 0.2s ease;
 }
 
-.aspect-line:hover {
-  opacity: 1 !important;
-  stroke-width: 2.5 !important;
-}
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
 
-/* =========================================
-   SCROLLBAR
-   ========================================= */
-::-webkit-scrollbar {
-  width: 4px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
-}
-
-/* =========================================
-   UTILITIES
-   ========================================= */
+/* ── Utilities ── */
 .glow-text {
-  text-shadow: 0 0 30px rgba(251, 191, 36, 0.4), 0 0 60px rgba(251, 191, 36, 0.1);
-}
-
-.glow-box {
-  box-shadow: 0 0 30px rgba(251, 191, 36, 0.12), 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-.text-gradient {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b, #c4b5fd);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  text-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
 }

@@ -21,14 +21,8 @@ export default function LocationSearch({ value, onChange }) {
   function handleInput(e) {
     const val = e.target.value
     setQuery(val)
-
     if (debounceRef.current) clearTimeout(debounceRef.current)
-
-    if (val.length < 2) {
-      setResults([])
-      setIsOpen(false)
-      return
-    }
+    if (val.length < 2) { setResults([]); setIsOpen(false); return }
 
     debounceRef.current = setTimeout(async () => {
       setLoading(true)
@@ -40,19 +34,16 @@ export default function LocationSearch({ value, onChange }) {
         const data = await res.json()
         setResults(data)
         setIsOpen(data.length > 0)
-      } catch {
-        setResults([])
-      }
+      } catch { setResults([]) }
       setLoading(false)
     }, 400)
   }
 
   function handleSelect(result) {
-    const display = result.display_name
-    setQuery(display)
+    setQuery(result.display_name)
     setIsOpen(false)
     onChange({
-      display,
+      display: result.display_name,
       latitude: parseFloat(result.lat),
       longitude: parseFloat(result.lon),
     })
@@ -77,12 +68,12 @@ export default function LocationSearch({ value, onChange }) {
       </div>
 
       {isOpen && (
-        <ul className="absolute z-50 w-full mt-2 bg-[#1e1245] border border-white/10 rounded-2xl overflow-hidden shadow-2xl max-h-64 overflow-y-auto">
+        <ul className="absolute z-50 w-full mt-2 bg-surface-light border border-white/10 rounded-2xl overflow-hidden shadow-2xl max-h-64 overflow-y-auto">
           {results.map((r, i) => (
             <li
               key={i}
               onClick={() => handleSelect(r)}
-              className="px-5 py-4 cursor-pointer hover:bg-white/5 text-sm text-white/70 hover:text-white transition-colors border-b border-white/5 last:border-b-0"
+              className="px-5 py-4 cursor-pointer hover:bg-surface-lighter text-sm text-white/80 hover:text-white transition-colors border-b border-white/5 last:border-b-0"
             >
               {r.display_name}
             </li>

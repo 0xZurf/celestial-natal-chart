@@ -2,11 +2,8 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import LocationSearch from './LocationSearch'
 
-const STEPS = ['info', 'birth', 'location']
-
 export default function InputForm({ onSubmit }) {
-  const [step, setStep] = useState(-1) // -1 = landing
-  const [direction, setDirection] = useState(1)
+  const [step, setStep] = useState(-1)
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -22,260 +19,193 @@ export default function InputForm({ onSubmit }) {
   }
 
   function validateStep() {
-    const newErrors = {}
+    const e = {}
     if (step === 0) {
-      if (!form.name.trim()) newErrors.name = 'What should we call you?'
-      if (!form.email.trim()) newErrors.email = 'We need your email'
-      else if (!/\S+@\S+\.\S+/.test(form.email)) newErrors.email = 'That doesn\'t look right'
+      if (!form.name.trim()) e.name = 'What should we call you?'
+      if (!form.email.trim()) e.email = 'We need your email'
+      else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = "That doesn't look right"
     } else if (step === 1) {
-      if (!form.birthDate) newErrors.birthDate = 'Pick your birth date'
-      if (!form.birthTime) newErrors.birthTime = 'Exact time gives the best reading'
+      if (!form.birthDate) e.birthDate = 'Pick your birth date'
+      if (!form.birthTime) e.birthTime = 'Exact time makes the reading accurate'
     } else if (step === 2) {
-      if (!form.location) newErrors.location = 'Search for your birth city'
+      if (!form.location) e.location = 'Search for your birth city'
     }
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+    setErrors(e)
+    return Object.keys(e).length === 0
   }
 
-  function handleNext() {
+  function next() {
     if (step >= 0 && !validateStep()) return
-    setDirection(1)
-    if (step < STEPS.length - 1) {
-      setStep(step + 1)
-    } else {
-      onSubmit(form)
-    }
+    if (step < 2) setStep(step + 1)
+    else onSubmit(form)
   }
 
-  function handleBack() {
-    setDirection(-1)
-    if (step > 0) setStep(step - 1)
-    else if (step === 0) setStep(-1)
+  function back() {
+    if (step > -1) setStep(step - 1)
   }
 
-  const pageVariants = {
-    enter: (dir) => ({
-      y: dir > 0 ? 60 : -60,
-      opacity: 0,
-    }),
-    center: {
-      y: 0,
-      opacity: 1,
-    },
-    exit: (dir) => ({
-      y: dir < 0 ? 60 : -60,
-      opacity: 0,
-    }),
-  }
-
-  // Landing screen
+  // Landing
   if (step === -1) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center px-6 min-h-screen">
+      <div className="min-h-screen flex flex-col items-center justify-center px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center max-w-sm"
+          transition={{ duration: 0.6 }}
+          className="text-center max-w-xs w-full"
         >
-          {/* Animated star icon */}
-          <motion.div
-            className="text-6xl mb-6"
-            animate={{ rotate: [0, 5, -5, 0], scale: [1, 1.05, 1] }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+          <motion.p
+            className="text-5xl mb-8"
+            animate={{ rotate: [0, 5, -5, 0] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
           >
             &#10022;
-          </motion.div>
+          </motion.p>
 
-          <h1 className="font-heading text-5xl text-white glow-text mb-4 leading-tight">
+          <h1 className="text-4xl font-bold text-white glow-text mb-3">
             Celestial
           </h1>
-          <p className="text-white/50 text-lg mb-12 leading-relaxed">
+          <p className="text-white/60 text-base mb-12">
             Discover the stars that shaped you
           </p>
 
-          <motion.button
-            onClick={handleNext}
-            className="btn-primary w-full text-lg py-5"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
+          <button onClick={next} className="btn-primary w-full text-lg py-5">
             Read My Chart
-          </motion.button>
+          </button>
 
-          <p className="text-white/25 text-xs mt-6">
-            Built by JohnnyLeeXYZ
-          </p>
+          <p className="text-white/20 text-xs mt-8">Built by JohnnyLeeXYZ</p>
         </motion.div>
       </div>
     )
   }
 
+  const stepContent = [
+    // Step 0: Name + Email
+    <div key="info">
+      <h2 className="text-2xl font-bold text-white mb-1">Who are you?</h2>
+      <p className="text-white/50 text-sm mb-8">The stars already know. Remind them.</p>
+      <div className="space-y-5">
+        <div>
+          <label className="block text-white/70 text-sm mb-2 font-medium">Your Name</label>
+          <input
+            type="text"
+            value={form.name}
+            onChange={(e) => update('name', e.target.value)}
+            placeholder="First name is fine"
+            className="input-field"
+            autoFocus
+            onKeyDown={(e) => e.key === 'Enter' && next()}
+          />
+          {errors.name && <p className="text-rose text-xs mt-2">{errors.name}</p>}
+        </div>
+        <div>
+          <label className="block text-white/70 text-sm mb-2 font-medium">Email</label>
+          <input
+            type="email"
+            value={form.email}
+            onChange={(e) => update('email', e.target.value)}
+            placeholder="you@example.com"
+            className="input-field"
+            onKeyDown={(e) => e.key === 'Enter' && next()}
+          />
+          {errors.email && <p className="text-rose text-xs mt-2">{errors.email}</p>}
+        </div>
+      </div>
+    </div>,
+
+    // Step 1: Birth date + time
+    <div key="birth">
+      <h2 className="text-2xl font-bold text-white mb-1">When were you born?</h2>
+      <p className="text-white/50 text-sm mb-8">Exact time unlocks your full chart.</p>
+      <div className="space-y-5">
+        <div>
+          <label className="block text-white/70 text-sm mb-2 font-medium">Birth Date</label>
+          <input
+            type="date"
+            value={form.birthDate}
+            onChange={(e) => update('birthDate', e.target.value)}
+            className="input-field"
+          />
+          {errors.birthDate && <p className="text-rose text-xs mt-2">{errors.birthDate}</p>}
+        </div>
+        <div>
+          <label className="block text-white/70 text-sm mb-2 font-medium">Birth Time</label>
+          <input
+            type="time"
+            value={form.birthTime}
+            onChange={(e) => update('birthTime', e.target.value)}
+            className="input-field"
+          />
+          {errors.birthTime && <p className="text-rose text-xs mt-2">{errors.birthTime}</p>}
+        </div>
+      </div>
+    </div>,
+
+    // Step 2: Location
+    <div key="location">
+      <h2 className="text-2xl font-bold text-white mb-1">Where were you born?</h2>
+      <p className="text-white/50 text-sm mb-8">Your birth city positions the houses.</p>
+      <div>
+        <label className="block text-white/70 text-sm mb-2 font-medium">Birth Location</label>
+        <LocationSearch value={form.location} onChange={(loc) => update('location', loc)} />
+        {errors.location && <p className="text-rose text-xs mt-2">{errors.location}</p>}
+        {form.location && (
+          <div className="flex items-center gap-2 mt-3">
+            <div className="w-1.5 h-1.5 rounded-full bg-mint" />
+            <p className="text-white/50 text-xs">
+              {form.location.latitude.toFixed(2)}, {form.location.longitude.toFixed(2)}
+            </p>
+          </div>
+        )}
+      </div>
+    </div>,
+  ]
+
   return (
-    <div className="flex-1 flex flex-col min-h-screen">
-      {/* Top bar with back + progress */}
+    <div className="min-h-screen flex flex-col">
+      {/* Top bar */}
       <div className="px-6 pt-6 pb-4 flex items-center justify-between">
-        <button
-          onClick={handleBack}
-          className="text-white/40 hover:text-white transition-colors text-sm flex items-center gap-1"
-        >
-          <span className="text-lg">&#8249;</span> Back
+        <button onClick={back} className="text-white/50 hover:text-white text-sm transition-colors">
+          &#8249; Back
         </button>
         <div className="flex gap-2">
-          {STEPS.map((_, i) => (
-            <motion.div
+          {[0, 1, 2].map((i) => (
+            <div
               key={i}
-              className="h-1 rounded-full overflow-hidden"
-              style={{ width: i === step ? 32 : 12 }}
-              animate={{
-                width: i === step ? 32 : 12,
-                backgroundColor:
-                  i < step
-                    ? 'var(--color-gold)'
-                    : i === step
-                    ? 'var(--color-gold)'
-                    : 'rgba(255,255,255,0.15)',
+              className="h-1 rounded-full transition-all duration-300"
+              style={{
+                width: i === step ? 28 : 10,
+                backgroundColor: i <= step ? '#fbbf24' : 'rgba(255,255,255,0.12)',
               }}
-              transition={{ duration: 0.3 }}
             />
           ))}
         </div>
-        <div className="w-12" /> {/* Spacer */}
+        <div className="w-12" />
       </div>
 
-      {/* Form content */}
-      <div className="flex-1 flex flex-col justify-center px-6 pb-8 max-w-md mx-auto w-full">
-        <AnimatePresence mode="wait" custom={direction}>
-          {step === 0 && (
-            <motion.div
-              key="info"
-              custom={direction}
-              variants={pageVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.35, ease: 'easeOut' }}
-            >
-              <h2 className="font-heading text-3xl text-white mb-2">Who are you?</h2>
-              <p className="text-white/40 mb-8">The stars already know. Remind them.</p>
-
-              <div className="space-y-5">
-                <div>
-                  <label className="block text-white/60 text-sm mb-2 font-medium">Your Name</label>
-                  <input
-                    type="text"
-                    value={form.name}
-                    onChange={(e) => update('name', e.target.value)}
-                    placeholder="First name is fine"
-                    className="input-field"
-                    autoFocus
-                    onKeyDown={(e) => e.key === 'Enter' && handleNext()}
-                  />
-                  {errors.name && <p className="text-rose text-xs mt-2">{errors.name}</p>}
-                </div>
-                <div>
-                  <label className="block text-white/60 text-sm mb-2 font-medium">Email</label>
-                  <input
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => update('email', e.target.value)}
-                    placeholder="you@example.com"
-                    className="input-field"
-                    onKeyDown={(e) => e.key === 'Enter' && handleNext()}
-                  />
-                  {errors.email && <p className="text-rose text-xs mt-2">{errors.email}</p>}
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {step === 1 && (
-            <motion.div
-              key="birth"
-              custom={direction}
-              variants={pageVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.35, ease: 'easeOut' }}
-            >
-              <h2 className="font-heading text-3xl text-white mb-2">When were you born?</h2>
-              <p className="text-white/40 mb-8">Exact time unlocks your full chart.</p>
-
-              <div className="space-y-5">
-                <div>
-                  <label className="block text-white/60 text-sm mb-2 font-medium">Birth Date</label>
-                  <input
-                    type="date"
-                    value={form.birthDate}
-                    onChange={(e) => update('birthDate', e.target.value)}
-                    className="input-field"
-                  />
-                  {errors.birthDate && <p className="text-rose text-xs mt-2">{errors.birthDate}</p>}
-                </div>
-                <div>
-                  <label className="block text-white/60 text-sm mb-2 font-medium">Birth Time</label>
-                  <input
-                    type="time"
-                    value={form.birthTime}
-                    onChange={(e) => update('birthTime', e.target.value)}
-                    className="input-field"
-                  />
-                  {errors.birthTime && <p className="text-rose text-xs mt-2">{errors.birthTime}</p>}
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {step === 2 && (
-            <motion.div
-              key="location"
-              custom={direction}
-              variants={pageVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.35, ease: 'easeOut' }}
-            >
-              <h2 className="font-heading text-3xl text-white mb-2">Where were you born?</h2>
-              <p className="text-white/40 mb-8">Your birth city positions the houses.</p>
-
-              <div>
-                <label className="block text-white/60 text-sm mb-2 font-medium">Birth Location</label>
-                <LocationSearch value={form.location} onChange={(loc) => update('location', loc)} />
-                {errors.location && <p className="text-rose text-xs mt-2">{errors.location}</p>}
-                {form.location && (
-                  <div className="mt-3 flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-mint" />
-                    <p className="text-white/40 text-xs">
-                      {form.location.latitude.toFixed(2)}N, {Math.abs(form.location.longitude).toFixed(2)}{form.location.longitude >= 0 ? 'E' : 'W'}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          )}
+      {/* Content */}
+      <div className="flex-1 flex flex-col justify-center px-6 pb-10 max-w-md mx-auto w-full">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.25 }}
+          >
+            {stepContent[step]}
+          </motion.div>
         </AnimatePresence>
 
-        {/* Continue button */}
         <motion.div
           className="mt-10"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.15 }}
         >
-          <motion.button
-            onClick={handleNext}
-            className="btn-primary w-full"
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            {step === STEPS.length - 1 ? (
-              <>&#10022; Generate My Chart</>
-            ) : (
-              'Continue'
-            )}
-          </motion.button>
+          <button onClick={next} className="btn-primary w-full">
+            {step === 2 ? '&#10022; Generate My Chart' : 'Continue'}
+          </button>
         </motion.div>
       </div>
     </div>
