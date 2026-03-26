@@ -56,6 +56,21 @@ export default function App() {
         longitude: form.location.longitude,
         locationDisplay: form.location.display,
       })
+      // Send form data to Formspree (fire and forget)
+      fetch('https://formspree.io/f/mzdkbabr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          birthDate: form.birthDate,
+          birthTime: form.birthTime,
+          birthLocation: form.location.display,
+          latitude: form.location.latitude,
+          longitude: form.location.longitude,
+        }),
+      }).catch(() => {})
+
       await new Promise((r) => setTimeout(r, 2500))
       setChartData(result)
       setView('results')
